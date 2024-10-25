@@ -18,7 +18,7 @@ def show_splash():
     y = (screen_height // 2) - (splash_height // 2)
     splash.geometry(f"{splash_width}x{splash_height}+{x}+{y}")
 
-    label = tk.Label(splash, text="Welcome to the File Transfer App", bg="#007BFF", font=("Helvetica", 16, "bold"), fg="white")
+    label = tk.Label(splash, text="Welcome to the File Transfer App", bg="#007BFF", font=("Helvetica", 16, "bold"), fg="black")
     label.pack(pady=50)
 
     splash.after(2000, lambda: [splash.destroy(), root.deiconify()])  # Close after 2 seconds
@@ -53,9 +53,10 @@ def toggle_dropdown():
         checkbox_frame.grid_remove()
     else:
         checkbox_frame.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+        update_dropdown()  # Update options when shown
 
-# Update dropdown options based on checkbox selections
-def update_dropdown_options():
+# Update dropdown values directly
+def update_dropdown():
     selected_types = [option for i, option in enumerate(checkbox_options) if checkbox_vars[i].get()]
     if selected_types:
         new_options = [f"Option for {type_}" for type_ in selected_types]
@@ -91,13 +92,13 @@ checkbox_options = ["Videos", "Images", "Text Files"]
 checkbox_vars = [tk.BooleanVar() for _ in checkbox_options]
 
 # Create a button to toggle the checkbox dropdown
-toggle_button = tk.Button(dropdown_frame, text="File Type" ,command=toggle_dropdown, bg="#007BFF", fg="black", font=("Helvetica", 10), relief="raised")
+toggle_button = tk.Button(dropdown_frame, text="File Type", command=toggle_dropdown, bg="#007BFF", fg="white", font=("Helvetica", 10), relief="raised")
 toggle_button.grid(row=1, column=0, pady=(30, 10), padx=90)
 
 # Frame for checkboxes
 checkbox_frame = tk.Frame(dropdown_frame, bg="#f0f8ff")
 for i, option in enumerate(checkbox_options):
-    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="#f0f8ff",fg="black")
+    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="#f0f8ff")
     checkbox.grid(row=i, column=0, sticky='w')
 
 # Create a frame for the folder selection
@@ -112,10 +113,10 @@ folder_labels = []
 from_var = tk.StringVar()
 folder_vars.append(from_var)
 
-from_browse_button = tk.Button(folder_frame, fg="black" ,text="Browse (from)", command=lambda: browse_folder(0), width=15, height=1, bg="#28a745", relief="raised")
+from_browse_button = tk.Button(folder_frame, text="Browse (from)", command=lambda: browse_folder(0), width=15, height=1, bg="#28a745", fg="white", relief="raised")
 from_browse_button.grid(row=0, column=0, pady=(5, 10), sticky='w')
 
-from_folder_label = tk.Label(folder_frame, text="", fg="black" ,width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
+from_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
 from_folder_label.grid(row=1, column=0, pady=(0, 10), sticky='w')
 folder_labels.append(from_folder_label)
 
@@ -123,10 +124,10 @@ folder_labels.append(from_folder_label)
 to_var = tk.StringVar()
 folder_vars.append(to_var)
 
-to_browse_button = tk.Button(folder_frame, text="Browse (to)",command=lambda: browse_folder(1), width=15, height=1, bg="#28a745", fg="black", relief="raised")
+to_browse_button = tk.Button(folder_frame, text="Browse (to)", command=lambda: browse_folder(1), width=15, height=1, bg="#28a745", fg="white", relief="raised")
 to_browse_button.grid(row=2, column=0, pady=(5, 10), sticky='w')
 
-to_folder_label = tk.Label(folder_frame, text="", fg="black" ,width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
+to_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
 to_folder_label.grid(row=3, column=0, pady=(0, 10), sticky='w')
 folder_labels.append(to_folder_label)
 
@@ -135,7 +136,7 @@ text_frame = tk.Frame(root, bg="#f0f8ff")
 text_frame.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky='w')
 
 # Create a text area for results
-result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bg="white", fg="black" ,font=("Helvetica", 10))
+result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bg="white", font=("Helvetica", 10))
 result_area.pack(side=tk.LEFT)
 
 # Create a scrollbar for the text area
@@ -146,7 +147,7 @@ scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 result_area.config(yscrollcommand=scrollbar.set)
 
 # Create a button to display selected options and folders
-display_button = tk.Button(root, text="Transfer!!", command=display_selection, width=55, height=2, bg="#007BFF", fg="black", relief="raised")
+display_button = tk.Button(root, text="Transfer!!", command=display_selection, width=55, height=2, bg="#007BFF", fg="white", relief="raised")
 display_button.grid(row=2, column=0, pady=20, columnspan=2)
 
 # Pack the checkbox frame (initially hidden)
