@@ -22,24 +22,27 @@ def show_splash():
 
     splash.after(2000, lambda: [splash.destroy(), root.deiconify()])
 
+# Log message function
+def log_message(message):
+    result_area.config(state=tk.NORMAL)
+    result_area.insert(tk.END, message + "\n")
+    result_area.config(state=tk.DISABLED)
+    result_area.yview(tk.END)  # Scroll to the bottom
+
 # Display selections function
 def display_selection():
     if any(not folder_var.get() for folder_var in folder_vars):
         messagebox.showwarning("Warning", "Please select both folders.")
         return
 
-    result_area.config(state=tk.NORMAL)
-    result_area.delete(1.0, tk.END)
     selected_options = [combo.get() for combo in combo_vars if isinstance(combo, ttk.Combobox)]
     selected_folders = [folder_var.get() for folder_var in folder_vars]
     selected_checkboxes = [option for i, option in enumerate(checkbox_options) if checkbox_vars[i].get()]
 
-    result_area.insert(tk.END, "Selected Options: " + ", ".join(selected_options) + "\n")
-    result_area.insert(tk.END, "Folders: " + ", ".join(selected_folders) + "\n")
-    result_area.insert(tk.END, "Selected Checkboxes: " + ", ".join(selected_checkboxes) + "\n")
-    result_area.config(state=tk.DISABLED)
-
-    status_label.config(text="Transfer details displayed.")
+    log_message("Selected Options: " + ", ".join(selected_options))
+    log_message("Folders: " + ", ".join(selected_folders))
+    log_message("Selected Checkboxes: " + ", ".join(selected_checkboxes))
+    status_label.config(text="Transfer details logged.")
 
 # Browse folder function
 def browse_folder(index):
