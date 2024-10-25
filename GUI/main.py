@@ -39,12 +39,27 @@ def display_selection():
     result_area.insert(tk.END, "Selected Checkboxes: " + ", ".join(selected_checkboxes) + "\n")
     result_area.config(state=tk.DISABLED)
 
+    status_label.config(text="Transfer details displayed.")
+
 # Browse folder function
 def browse_folder(index):
     foldername = filedialog.askdirectory()
     if foldername:
         folder_vars[index].set(foldername)
         folder_labels[index].config(text=foldername)
+        status_label.config(text="Folder selected.")
+
+# Clear selections function
+def clear_selections():
+    for folder_var in folder_vars:
+        folder_var.set('')
+    for checkbox_var in checkbox_vars:
+        checkbox_var.set(False)
+    combo1.set('')
+    result_area.config(state=tk.NORMAL)
+    result_area.delete(1.0, tk.END)
+    result_area.config(state=tk.DISABLED)
+    status_label.config(text="Selections cleared.")
 
 # Toggle dropdown menu for checkboxes
 def toggle_dropdown():
@@ -123,7 +138,14 @@ result_area.config(yscrollcommand=scrollbar.set)
 display_button = tk.Button(root, text="Transfer!!", command=display_selection, width=55, height=2, bg="#007BFF", fg="black", relief="raised")
 display_button.grid(row=2, column=0, pady=20, columnspan=2)
 
+clear_button = tk.Button(root, text="Clear Selections", command=clear_selections, width=55, height=2, bg="#FFC107", fg="black", relief="raised")
+clear_button.grid(row=3, column=0, pady=10, columnspan=2)
+
 checkbox_frame.grid_remove()
+
+# Status label
+status_label = tk.Label(root, text="", fg="green", bg="white", font=("Helvetica", 10))
+status_label.grid(row=4, column=0, columnspan=2)
 
 # Close splash screen and main window
 def on_closing():
