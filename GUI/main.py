@@ -13,6 +13,8 @@ def display_selection():
     selected_options = [combo.get() for combo in combo_vars if isinstance(combo, ttk.Combobox)]  # Get options from dropdown
     selected_folders = [folder_var.get() for folder_var in folder_vars]  # Get selected folders
     selected_checkboxes = [option for i, option in enumerate(checkbox_options) if checkbox_vars[i].get()]
+    
+    # Display gathered information
     result_area.insert(tk.END, "Selected Options: " + ", ".join(selected_options) + "\n")
     result_area.insert(tk.END, "Folders: " + ", ".join(selected_folders) + "\n")
     result_area.insert(tk.END, "Selected Checkboxes: " + ", ".join(selected_checkboxes) + "\n")
@@ -34,7 +36,6 @@ def toggle_dropdown():
 
 # Update dropdown options based on checkbox selections
 def update_dropdown_options():
-    # Example logic: Add options based on selected checkboxes
     selected_types = [option for i, option in enumerate(checkbox_options) if checkbox_vars[i].get()]
     if selected_types:
         new_options = [f"Option for {type_}" for type_ in selected_types]
@@ -50,15 +51,15 @@ root.geometry("800x500")  # Set window size to 800x500 pixels
 
 # Create a frame for the dropdown menus
 dropdown_frame = tk.Frame(root)
-dropdown_frame.grid(row=0, column=0, padx=(10, 5), pady=10)  # Add padding on the left side
+dropdown_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w')  # Align to the left
 
 # List of options for the dropdown menus
-options = ["Zip and Cut", "Zip and Copy", "Zip", "Option 4"]
+options = ["Zip and Cut", "Zip and Copy", "copy", "cut"]
 
 # Create variables for dropdowns
 combo_vars = []
 combo1 = ttk.Combobox(dropdown_frame, values=options, state='readonly', width=30)
-combo1.grid(row=0, column=0, pady=5)  # Add padding
+combo1.grid(row=0, column=0, pady=(0, 5))  # Add padding
 combo_vars.append(combo1)
 
 # Checkbox options
@@ -67,39 +68,50 @@ checkbox_vars = [tk.BooleanVar() for _ in checkbox_options]
 
 # Create a button to toggle the checkbox dropdown
 toggle_button = tk.Button(dropdown_frame, text="File Type", command=toggle_dropdown)
-toggle_button.grid(row=1, column=0, pady=5)
+toggle_button.grid(row=1, column=0, pady=(30, 10),padx=90)  # Moved slightly down
 
 # Frame for checkboxes (dropdown effect)
 checkbox_frame = tk.Frame(dropdown_frame)
 for i, option in enumerate(checkbox_options):
     checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], command=update_dropdown_options)
-    checkbox.grid(row=i, column=0, sticky='w')
+    checkbox.grid(row=i, column=0,sticky='w')
 
 # Create a frame for the folder selection
 folder_frame = tk.Frame(root)
-folder_frame.grid(row=0, column=1, padx=10, pady=10)
+folder_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')  # Align to the left
 
 # Create variables for folders
 folder_vars = []
 folder_labels = []  # To store labels for folder display
 
-# Create Browse buttons for folder selection
-for i in range(2):
-    var = tk.StringVar()
-    folder_vars.append(var)
-    folder_label = tk.Label(folder_frame, text="", width=50)  # Label to display selected folder
-    folder_label.grid(row=i, column=0, pady=5)
-    folder_labels.append(folder_label)
+# Define first browse button ("From")
+from_var = tk.StringVar()
+folder_vars.append(from_var)
 
-    browse_button = tk.Button(folder_frame, text=f"Browse Folder {i + 1}", command=lambda idx=i: browse_folder(idx), width=20, height=2)
-    browse_button.grid(row=i, column=1, pady=5)  # Place button next to the label
+from_browse_button = tk.Button(folder_frame, text="Browse (from)", command=lambda: browse_folder(0), width=15, height=1)
+from_browse_button.grid(row=0, column=0, pady=(5, 10), sticky='w')  # Align to the left
+
+from_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")  # Bold font and background
+from_folder_label.grid(row=1, column=0, pady=(0, 10), sticky='w')  # Align to the left
+folder_labels.append(from_folder_label)
+
+# Define second browse button ("To")
+to_var = tk.StringVar()
+folder_vars.append(to_var)
+
+to_browse_button = tk.Button(folder_frame, text="Browse (to)", command=lambda: browse_folder(1), width=15, height=1)
+to_browse_button.grid(row=2, column=0, pady=(5, 10), sticky='w')  # Align to the left
+
+to_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")  # Bold font and background
+to_folder_label.grid(row=3, column=0, pady=(0, 10), sticky='w')  # Align to the left
+folder_labels.append(to_folder_label)
 
 # Create a frame for the text area and scrollbar
 text_frame = tk.Frame(root)
-text_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+text_frame.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky='w')
 
 # Create a text area for results with adjusted size
-result_area = tk.Text(text_frame, height=15, width=80, state=tk.DISABLED)  # Set height and width of text area
+result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED)  # Set height and width of text area
 result_area.pack(side=tk.LEFT)
 
 # Create a scrollbar for the text area
@@ -110,8 +122,8 @@ scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 result_area.config(yscrollcommand=scrollbar.set)
 
 # Create a button to display selected options and folders
-display_button = tk.Button(root, text="Show Selections", command=display_selection, width=20, height=2)  # Set width and height of button
-display_button.grid(row=2, column=0, columnspan=2, pady=20)  # Span across two columns
+display_button = tk.Button(root, text="Transfer!!", command=display_selection, width=55, height=2)  # Set width and height of button
+display_button.grid(row=2,pady=20,columnspan=4)  # Centered below text area
 
 # Pack the checkbox frame (initially hidden)
 checkbox_frame.grid_remove()
