@@ -1,8 +1,13 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 
 # Display selections function
 def display_selection():
+    # Validate folder selection
+    if any(not folder_var.get() for folder_var in folder_vars):
+        messagebox.showwarning("Warning", "Please select both folders.")
+        return
+    
     result_area.config(state=tk.NORMAL)
     result_area.delete(1.0, tk.END)  # Clear previous results
     selected_options = [combo.get() for combo in combo_vars if isinstance(combo, ttk.Combobox)]  # Get options from dropdown
@@ -16,8 +21,9 @@ def display_selection():
 # Browse folder function
 def browse_folder(index):
     foldername = filedialog.askdirectory()  # Open folder selection dialog
-    folder_vars[index].set(foldername)  # Set the variable to the selected folder
-    folder_labels[index].config(text=foldername)  # Update the label with the selected folder
+    if foldername:  # Check if a folder was selected
+        folder_vars[index].set(foldername)  # Set the variable to the selected folder
+        folder_labels[index].config(text=foldername)  # Update the label with the selected folder
 
 # Toggle dropdown menu for checkboxes
 def toggle_dropdown():
@@ -26,39 +32,47 @@ def toggle_dropdown():
     else:
         checkbox_frame.grid(row=1, column=0, padx=5, pady=5, sticky='w')
 
+# Update dropdown options based on checkbox selections
+def update_dropdown_options():
+    # Example logic: Add options based on selected checkboxes
+    selected_types = [option for i, option in enumerate(checkbox_options) if checkbox_vars[i].get()]
+    if selected_types:
+        new_options = [f"Option for {type_}" for type_ in selected_types]
+        combo1['values'] = new_options
+    else:
+        combo1['values'] = options  # Reset to default options
+    combo1.set('')  # Clear selection
+
 # Create the main window
 root = tk.Tk()
-root.title("Simple Dummy App")
-root.geometry("1366x768")  # Set window size to 1366x768 pixels
+root.title("File Transfer")
+root.geometry("800x500")  # Set window size to 800x500 pixels
 
 # Create a frame for the dropdown menus
 dropdown_frame = tk.Frame(root)
 dropdown_frame.grid(row=0, column=0, padx=(10, 5), pady=10)  # Add padding on the left side
 
 # List of options for the dropdown menus
-options = ["Option 1", "Option 2", "Option 3", "Option 4"]
+options = ["Zip and Cut", "Zip and Copy", "Zip", "Option 4"]
 
 # Create variables for dropdowns
 combo_vars = []
-
-# Create the first dropdown
 combo1 = ttk.Combobox(dropdown_frame, values=options, state='readonly', width=30)
 combo1.grid(row=0, column=0, pady=5)  # Add padding
 combo_vars.append(combo1)
 
 # Checkbox options
-checkbox_options = ["Checkbox 1", "Checkbox 2", "Checkbox 3"]
+checkbox_options = ["Videos", "Images", "Text Files"]
 checkbox_vars = [tk.BooleanVar() for _ in checkbox_options]
 
 # Create a button to toggle the checkbox dropdown
-toggle_button = tk.Button(dropdown_frame, text="Select Options", command=toggle_dropdown)
+toggle_button = tk.Button(dropdown_frame, text="File Type", command=toggle_dropdown)
 toggle_button.grid(row=1, column=0, pady=5)
 
 # Frame for checkboxes (dropdown effect)
 checkbox_frame = tk.Frame(dropdown_frame)
-
 for i, option in enumerate(checkbox_options):
-    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i])
+    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], command=update_dropdown_options)
     checkbox.grid(row=i, column=0, sticky='w')
 
 # Create a frame for the folder selection
