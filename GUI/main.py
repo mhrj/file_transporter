@@ -5,9 +5,9 @@ from tkinter import ttk, filedialog, messagebox
 def show_splash():
     splash = tk.Toplevel()
     splash.title("Welcome")
-    splash.geometry("400x200")  # Default size
+    splash.geometry("400x200")
     splash.configure(bg="#007BFF")  # Blue background
-    splash.overrideredirect(True)  # Remove window decorations (including the close button)
+    splash.overrideredirect(True)  # Remove window decorations
 
     # Center the splash screen
     splash_width = 400
@@ -68,12 +68,13 @@ def update_dropdown_options():
 root = tk.Tk()
 root.title("File Transfer")
 root.geometry("800x500")
+root.configure(bg="#f0f8ff")  # Set light background color for root
 root.withdraw()  # Hide the main window initially
 
 show_splash()  # Show the splash screen
 
 # Create a frame for the dropdown menus
-dropdown_frame = tk.Frame(root, bg="#f0f0f0")
+dropdown_frame = tk.Frame(root, bg="#f0f8ff")
 dropdown_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
 # List of options for the dropdown menus
@@ -94,13 +95,13 @@ toggle_button = tk.Button(dropdown_frame, text="File Type", command=toggle_dropd
 toggle_button.grid(row=1, column=0, pady=(30, 10), padx=90)
 
 # Frame for checkboxes
-checkbox_frame = tk.Frame(dropdown_frame)
+checkbox_frame = tk.Frame(dropdown_frame, bg="#f0f8ff")
 for i, option in enumerate(checkbox_options):
-    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], command=update_dropdown_options, bg="#f0f0f0")
+    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="#f0f8ff")
     checkbox.grid(row=i, column=0, sticky='w')
 
 # Create a frame for the folder selection
-folder_frame = tk.Frame(root, bg="#f0f0f0")
+folder_frame = tk.Frame(root, bg="#f0f8ff")
 folder_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
 # Create variables for folders
@@ -130,7 +131,7 @@ to_folder_label.grid(row=3, column=0, pady=(0, 10), sticky='w')
 folder_labels.append(to_folder_label)
 
 # Create a frame for the text area and scrollbar
-text_frame = tk.Frame(root, bg="#f0f0f0")
+text_frame = tk.Frame(root, bg="#f0f8ff")
 text_frame.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky='w')
 
 # Create a text area for results
