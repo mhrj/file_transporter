@@ -6,18 +6,18 @@ from PIL import Image, ImageTk
 def create_rounded_button(parent, text, command, width=15, icon_path=None):
     button = ttk.Button(parent, text=text, command=command, width=width)
     button.config(style="Rounded.TButton")
-    
+
     if icon_path:
-        img = Image.open("D:\\hp backups\\barname nevisi\\PlayGround\\Python\\Uni\\file_transporter\\GUI\\folder_icon.png")
+        img = Image.open(icon_path)
         img = img.resize((20, 20), Image.ANTIALIAS)  # Resize icon
         icon = ImageTk.PhotoImage(img)
         button.config(image=icon, compound=tk.LEFT)  # Place icon on the left
         button.image = icon  # Keep a reference to avoid garbage collection
-    
+
     # Bind hover effects
     button.bind("<Enter>", lambda e: button.config(style="RoundedHover.TButton"))
     button.bind("<Leave>", lambda e: button.config(style="Rounded.TButton"))
-    
+
     return button
 
 # Splash Screen
@@ -94,17 +94,17 @@ def toggle_dropdown():
 root = tk.Tk()
 root.title("File Transfer")
 
-# Get screen dimensions
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
+# Set window size and background color
+root.geometry("800x600")
+root.configure(bg="#f0f0f0")  # Light gray background
 
-# Set the initial size
-window_width = 800
-window_height = 600
-root.geometry(f"{window_width}x{window_height}")
+# Load and set background image
+background_image = Image.open("background.jpg")  # Ensure this file exists
+background_image = background_image.resize((800, 600), Image.ANTIALIAS)
+bg_image = ImageTk.PhotoImage(background_image)
 
-root.configure(bg="white")
-root.withdraw()  # Hide the main window initially
+bg_label = tk.Label(root, image=bg_image)
+bg_label.place(relwidth=1, relheight=1)
 
 show_splash()  # Show the splash screen
 
@@ -116,7 +116,7 @@ style.map("Rounded.TButton", background=[("active", "#0056b3")])
 style.configure("RoundedHover.TButton", background="#0056b3")  # Hover effect style
 
 # Create a frame for the dropdown menus
-dropdown_frame = tk.Frame(root, bg="white")
+dropdown_frame = tk.Frame(root, bg="white", bd=2, relief="groove")
 dropdown_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
 options = ["Zip and Cut", "Zip and Copy", "Copy", "Cut"]
@@ -137,7 +137,7 @@ for i, option in enumerate(checkbox_options):
     checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="white", fg="black")
     checkbox.grid(row=i, column=0, sticky='w')
 
-folder_frame = tk.Frame(root, bg="white")
+folder_frame = tk.Frame(root, bg="white", bd=2, relief="groove")
 folder_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
 folder_vars = []
@@ -146,7 +146,7 @@ folder_labels = []
 from_var = tk.StringVar()
 folder_vars.append(from_var)
 
-from_browse_button = create_rounded_button(folder_frame, "Browse (from)", lambda: browse_folder(0), icon_path="folder_icon.png")
+from_browse_button = create_rounded_button(folder_frame, "Browse (from)", lambda: browse_folder(0))
 from_browse_button.grid(row=0, column=0, pady=(5, 10), sticky='w')
 from_folder_label = tk.Label(folder_frame, text="", fg="black", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
 from_folder_label.grid(row=1, column=0, pady=(0, 10), sticky='w')
@@ -155,7 +155,7 @@ folder_labels.append(from_folder_label)
 to_var = tk.StringVar()
 folder_vars.append(to_var)
 
-to_browse_button = create_rounded_button(folder_frame, "Browse (to)", lambda: browse_folder(1), icon_path="folder_icon.png")
+to_browse_button = create_rounded_button(folder_frame, "Browse (to)", lambda: browse_folder(1))
 to_browse_button.grid(row=2, column=0, pady=(5, 10), sticky='w')
 to_folder_label = tk.Label(folder_frame, text="", fg="black", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
 to_folder_label.grid(row=3, column=0, pady=(0, 10), sticky='w')
