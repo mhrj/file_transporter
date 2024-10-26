@@ -74,7 +74,21 @@ def toggle_dropdown():
 # Create the main window
 root = tk.Tk()
 root.title("File Transfer")
-root.geometry("800x500")
+
+# Get screen dimensions
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# Set the window size to a percentage of the screen size
+window_width = int(screen_width * 0.3)  # 80% of screen width
+window_height = int(screen_height * 0.1)  # 80% of screen height
+
+# # Set the initial geometry
+# root.geometry(f"{max(window_width, 770)}x{max(window_height, 600)}")
+
+# # Set minimum size
+# root.minsize(770, 600)
+
 root.configure(bg="white")
 root.withdraw()  # Hide the main window initially
 
