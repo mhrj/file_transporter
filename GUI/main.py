@@ -1,14 +1,18 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
+import os
+
+# Get the current directory
+current_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Function to create rounded buttons with hover effects
 def create_rounded_button(parent, text, command, width=15, icon_path=None):
     button = ttk.Button(parent, text=text, command=command, width=width)
-    button.config(style="Rounded.TButton")
+    button.config(style="Rounded.TButton")  # Remove border
 
     if icon_path:
-        img = Image.open(icon_path)
+        img = Image.open(f"{current_directory}\\images\\folder_icon.png")
         img = img.resize((20, 20), Image.ANTIALIAS)  # Resize icon
         icon = ImageTk.PhotoImage(img)
         button.config(image=icon, compound=tk.LEFT)  # Place icon on the left
@@ -36,10 +40,31 @@ def show_splash():
     y = (screen_height // 2) - (splash_height // 2)
     splash.geometry(f"{splash_width}x{splash_height}+{x}+{y}")
 
-    label = tk.Label(splash, text="Welcome to the File Transfer App", bg="#007BFF", font=("Helvetica", 16, "bold"), fg="white")
-    label.pack(pady=50)
+    label = tk.Label(splash, text="Welcome to File Transfer App", bg="#007BFF", font=("Helvetica", 16, "bold"), fg="white")
+    label.pack(pady=20)
 
-    splash.after(2000, lambda: [splash.destroy(), root.deiconify()])
+# Animation image
+    animation_label = tk.Label(splash, bg="#007BFF")
+    animation_label.pack(pady=10)
+
+    # Load images for animation
+    animation_images = []
+    for i in range(1, 5):
+        img_path = os.path.join(current_directory, f"animation\\frame{i}.png")
+        img = Image.open(img_path).resize((100, 100), Image.ANTIALIAS)  # Resize if necessary
+        animation_images.append(ImageTk.PhotoImage(img))
+
+    # Animation sequence
+    def animate(index=0):
+        animation_label.config(image=animation_images[index])
+        index = (index + 1) % len(animation_images)
+        splash.after(600, animate, index)
+
+    animate()  # Start animation
+
+    # Close splash and show main window after a delay
+    splash.after(3000, lambda: [splash.destroy(), root.deiconify()])  # 3000 ms delay
+
 
 # Log message function
 def log_message(message):
@@ -83,13 +108,6 @@ def clear_selections():
     result_area.config(state=tk.DISABLED)
     status_label.config(text="Selections cleared.")
 
-# Toggle dropdown menu for checkboxes
-def toggle_dropdown():
-    if checkbox_frame.winfo_ismapped():
-        checkbox_frame.grid_remove()
-    else:
-        checkbox_frame.grid(row=2, column=0, padx=5, pady=5, sticky='w')
-
 # Create the main window
 root = tk.Tk()
 root.title("File Transfer")
@@ -99,13 +117,14 @@ root.geometry("800x600")
 root.configure(bg="#f0f0f0")  # Light gray background
 
 # Load and set background image
-background_image = Image.open("background.jpg")  # Ensure this file exists
+background_image = Image.open(f"{current_directory}\\images\\background.jpg")  # Ensure this file exists
 background_image = background_image.resize((800, 600), Image.ANTIALIAS)
 bg_image = ImageTk.PhotoImage(background_image)
 
-bg_label = tk.Label(root, image=bg_image)
+bg_label = tk.Label(root, image=bg_image, bd=0)  # Remove border
 bg_label.place(relwidth=1, relheight=1)
 
+root.withdraw()  # Hide main window before splash screen
 show_splash()  # Show the splash screen
 
 # Configure styles
@@ -116,7 +135,7 @@ style.map("Rounded.TButton", background=[("active", "#0056b3")])
 style.configure("RoundedHover.TButton", background="#0056b3")  # Hover effect style
 
 # Create a frame for the dropdown menus
-dropdown_frame = tk.Frame(root, bg="white", bd=2, relief="groove")
+dropdown_frame = tk.Frame(root, bd=0)  # Remove border
 dropdown_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
 options = ["Zip and Cut", "Zip and Copy", "Copy", "Cut"]
@@ -126,45 +145,48 @@ combo1.grid(row=0, column=0, pady=(0, 5))
 combo_vars.append(combo1)
 
 # Button to toggle file type options
-toggle_button = create_rounded_button(dropdown_frame, "File Type", toggle_dropdown)
+toggle_button = create_rounded_button(dropdown_frame, "File Type", lambda: None)
 toggle_button.grid(row=1, column=0, pady=(5, 10))
 
 checkbox_options = ["Videos", "Images", "Text Files"]
 checkbox_vars = [tk.BooleanVar() for _ in checkbox_options]
 
-checkbox_frame = tk.Frame(dropdown_frame, bg="white")
+checkbox_frame = tk.Frame(dropdown_frame, bd=0)  # Remove border
 for i, option in enumerate(checkbox_options):
-    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="white", fg="black")
+    checkbox = tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bd=0)  # Remove border
     checkbox.grid(row=i, column=0, sticky='w')
 
-folder_frame = tk.Frame(root, bg="white", bd=2, relief="groove")
+folder_frame = tk.Frame(root, bd=0)  # Remove border
 folder_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
 folder_vars = []
 folder_labels = []
 
+# From Folder
 from_var = tk.StringVar()
 folder_vars.append(from_var)
 
 from_browse_button = create_rounded_button(folder_frame, "Browse (from)", lambda: browse_folder(0))
 from_browse_button.grid(row=0, column=0, pady=(5, 10), sticky='w')
-from_folder_label = tk.Label(folder_frame, text="", fg="black", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
+from_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bd=0)  # Remove border
 from_folder_label.grid(row=1, column=0, pady=(0, 10), sticky='w')
 folder_labels.append(from_folder_label)
 
+# To Folder
 to_var = tk.StringVar()
 folder_vars.append(to_var)
 
 to_browse_button = create_rounded_button(folder_frame, "Browse (to)", lambda: browse_folder(1))
 to_browse_button.grid(row=2, column=0, pady=(5, 10), sticky='w')
-to_folder_label = tk.Label(folder_frame, text="", fg="black", width=50, font=("Helvetica", 10, "bold"), bg="lightyellow")
+to_folder_label = tk.Label(folder_frame, text="", width=50, font=("Helvetica", 10, "bold"), bd=0)  # Remove border
 to_folder_label.grid(row=3, column=0, pady=(0, 10), sticky='w')
 folder_labels.append(to_folder_label)
 
-text_frame = tk.Frame(root, bg="white")
+# Text area for logging results
+text_frame = tk.Frame(root, bd=0)  # Remove border
 text_frame.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky='w')
 
-result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bg="white", fg="black", font=("Helvetica", 10))
+result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bd=0)  # Remove border
 result_area.grid(row=0, column=0)
 
 scrollbar = tk.Scrollbar(text_frame, command=result_area.yview)
@@ -181,7 +203,7 @@ clear_button.grid(row=3, column=0, pady=10, columnspan=2)
 checkbox_frame.grid_remove()
 
 # Status label
-status_label = tk.Label(root, text="", fg="green", bg="white", font=("Helvetica", 10))
+status_label = tk.Label(root, text="", fg="green", font=("Helvetica", 10), bd=0)  # Remove border
 status_label.grid(row=4, column=0, columnspan=2)
 
 # Close splash screen and main window
