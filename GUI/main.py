@@ -42,7 +42,7 @@ def show_splash():
 
     animation_images = []
     for i in range(1, 5):
-        img_path = os.path.join(current_directory, f"animation\\frame{i}.png")
+        img_path = os.path.join(current_directory, f"animation//frame{i}.png")
         img = Image.open(img_path).resize((100, 100), Image.LANCZOS)
         animation_images.append(ImageTk.PhotoImage(img))
 
