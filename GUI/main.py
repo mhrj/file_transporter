@@ -10,7 +10,7 @@ def create_rounded_button(parent, text, command, width=15, icon_path=None):
     button.config(style="Rounded.TButton")
 
     if icon_path:
-        img = Image.open(f"{current_directory}\\images\\folder_icon.png")
+        img = Image.open(f"{current_directory}//images//folder_icon.png")
         img = img.resize((20, 20), Image.LANCZOS)
         icon = ImageTk.PhotoImage(img)
         button.config(image=icon, compound=tk.LEFT)
