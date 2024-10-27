@@ -11,7 +11,7 @@ def create_rounded_button(parent, text, command, width=15, icon_path=None):
 
     if icon_path:
         img = Image.open(f"{current_directory}\\images\\folder_icon.png")
-        img = img.resize((20, 20), Image.ANTIALIAS)
+        img = img.resize((20, 20), Image.LANCZOS)
         icon = ImageTk.PhotoImage(img)
         button.config(image=icon, compound=tk.LEFT)
         button.image = icon
@@ -43,7 +43,7 @@ def show_splash():
     animation_images = []
     for i in range(1, 5):
         img_path = os.path.join(current_directory, f"animation\\frame{i}.png")
-        img = Image.open(img_path).resize((100, 100), Image.ANTIALIAS)
+        img = Image.open(img_path).resize((100, 100), Image.LANCZOS)
         animation_images.append(ImageTk.PhotoImage(img))
 
     def animate(index=0):
@@ -109,7 +109,7 @@ root.geometry("800x600")
 root.configure(bg="#f0f0f0")
 
 background_image = Image.open(os.path.join(current_directory, "images", "background.jpg"))
-background_image = background_image.resize((800, 600), Image.ANTIALIAS)
+background_image = background_image.resize((800, 600), Image.LANCZOS)
 bg_image = ImageTk.PhotoImage(background_image)
 
 bg_label = tk.Label(root, image=bg_image)
