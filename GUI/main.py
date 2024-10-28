@@ -89,6 +89,7 @@ def clear_selections():
 
 # Main application window setup
 root = tk.Tk()
+root.title("File Transfer App")
 root.withdraw()
 show_splash()
 root.geometry("800x600")
