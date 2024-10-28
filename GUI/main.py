@@ -50,7 +50,7 @@ def log_message(message):
 
 def set_buttons_state(state):
     """Enables or disables all interactive buttons."""
-    for button in [display_button, clear_button, from_browse_button, to_browse_button, toggle_button]:
+    for button in [display_button, clear_button, folder_button, toggle_button]:
         button.config(state=state)
 
 def display_selection():
@@ -79,9 +79,11 @@ def browse_folder(index):
 
 def clear_selections():
     """Clears all selections, checkboxes, and the result text area."""
-    for var in folder_vars + checkbox_vars:
-        var.set('')
-    combo1.set('')
+    for var in folder_vars:
+        var.set('')  # Clear folder selections (StringVar)
+
+    for var in checkbox_vars:
+        var.set(False)  # Uncheck checkboxes (BooleanVar)
     result_area.config(state=tk.NORMAL)
     result_area.delete(1.0, tk.END)
     result_area.config(state=tk.DISABLED)
@@ -137,8 +139,8 @@ folder_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 folder_vars = [tk.StringVar() for _ in range(2)]
 folder_labels = []
 for i, label_text in enumerate(["from", "to"]):
-    button = create_rounded_button(folder_frame, f"Browse ({label_text})", lambda idx=i: browse_folder(idx))
-    button.grid(row=2*i, column=0, pady=(5, 10), sticky='w')
+    folder_button = create_rounded_button(folder_frame, f"Browse ({label_text})", lambda idx=i: browse_folder(idx))
+    folder_button.grid(row=2*i, column=0, pady=(5, 10), sticky='w')
     folder_labels.append(tk.Label(folder_frame, text="Select a folder...", width=50, font=("Helvetica", 10, "bold"), bg="#f0f0f0"))
     folder_labels[-1].grid(row=2*i + 1, column=0, pady=(0, 10), sticky='w')
 
