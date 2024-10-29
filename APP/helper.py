@@ -3,6 +3,7 @@ import shutil
 import zipfile
 from pathlib import Path
 
+
 # File categories and extensions
 FILE_TYPES = {
     "documents": [
@@ -53,15 +54,15 @@ def categorize_file(file):
     return None, None
 
 # Log individual files being processed
-def log_scanned_file(file):
-    print(f"Scanned file: {file}")
+def log_scanned_file(file,callback_log):
+    callback_log(f"Scanned file: {file}")
 
 # Log the summary of moved/copied files
-def log_summary(counts, sizes):
-    print("\nFile processing complete.")
+def log_summary(counts, sizes,callback_log):
+    callback_log("\nFile processing complete.")
     for category, count in counts.items():
         size_mb = sizes[category] / (1024 * 1024)  # Convert bytes to MB
-        print(f"{category.capitalize()} - Moved {count} files, Total Size: {size_mb:.2f} MB")
+        callback_log(f"{category.capitalize()} - Moved {count} files, Total Size: {size_mb:.2f} MB")
 
 # Get the list of file types to process
 def get_selected_types(user_input):
@@ -77,13 +78,13 @@ def zip_files(files, destination_folder, extension):
     return zip_path
 
 # Process files by moving/copying/zipping based on the method
-def process_files(main_dir, destination_dir, method, selected_types):
+def process_files(main_dir, destination_dir, method, selected_types, log_callback):
     destination_dir, subdirectories = setup_destination(main_dir, destination_dir)
     
     counts = {category: 0 for category in FILE_TYPES}
     sizes = {category: 0 for category in FILE_TYPES}
 
-    print("Starting file processing...\n")
+    log_callback("Starting file processing...\n")
     
     for root, _, files in os.walk(main_dir):
         # Skip the destination directory if it's inside main_dir
@@ -94,7 +95,7 @@ def process_files(main_dir, destination_dir, method, selected_types):
             file_path = os.path.join(root, file)
             category, ext = categorize_file(file)
             if category and category in selected_types:
-                log_scanned_file(file)
+                log_scanned_file(file,log_callback)
                 dest_folder = subdirectories[category][ext]
                 file_size = os.path.getsize(file_path)
                 
@@ -105,7 +106,7 @@ def process_files(main_dir, destination_dir, method, selected_types):
                 # Move, Copy, or Zip based on selected method
                 handle_file_action(file_path, dest_folder, method, ext)
                 
-    log_summary(counts, sizes)
+    log_summary(counts, sizes,log_callback)
 
 # Handle individual file action based on the selected method
 def handle_file_action(file_path, dest_folder, method, extension):
@@ -132,20 +133,3 @@ def copy_or_skip(file_path, dest_folder):
     dest_path = os.path.join(dest_folder, os.path.basename(file_path))
     if not os.path.exists(dest_path):
         shutil.copy(file_path, dest_path)
-
-# # Main function for user interaction via console (for testing)
-# def main():
-#     main_dir = input("Enter main directory path: ")
-#     destination_dir = input("Enter destination directory path (leave empty for default): ")
-#     method = int(input("Select method (1: Zip & Move, 2: Move, 3: Zip & Copy, 4: Copy): "))
-    
-#     print("File types available:")
-#     for idx, category in enumerate(FILE_TYPES.keys(), 1):
-#         print(f"{idx}: {category}")
-#     selected = list(map(int, input("Select file types by numbers (comma-separated): ").split(',')))
-    
-#     selected_types = get_selected_types(selected)
-#     process_files(main_dir, destination_dir, method, selected_types)
-
-# if __name__ == "__main__":
-#     main()
