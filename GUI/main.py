@@ -14,9 +14,6 @@ def create_rounded_button(parent, text, command, width=15, icon_path=None):
         icon = ImageTk.PhotoImage(img)
         button.config(image=icon, compound=tk.LEFT)
         button.image = icon
-
-    button.bind("<Enter>", lambda e: button.config(style="RoundedHover.TButton"))
-    button.bind("<Leave>", lambda e: button.config(style="Rounded.TButton"))
     return button
 
 def show_splash():
@@ -98,11 +95,11 @@ root.geometry("800x600")
 root.configure(bg="#f0f0f0")
 root.iconphoto(False, ImageTk.PhotoImage(file=os.path.join(current_directory, "logo.png")))
 
+# Prevent resizing
+root.resizable(width=False, height=False)
+
 style = ttk.Style()
 style.theme_use("clam")
-style.configure("Rounded.TButton", relief="flat", background="#007BFF", foreground="black", padding=6)
-style.map("Rounded.TButton", background=[("active", "#0056b3")])
-style.configure("RoundedHover.TButton", background="#0056b3")
 
 # Background image
 bg_image = ImageTk.PhotoImage(Image.open(os.path.join(current_directory, "images", "background.jpg")).resize((800, 600), Image.LANCZOS))
