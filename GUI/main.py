@@ -7,7 +7,7 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 
 def create_rounded_button(parent, text, command, width=15, icon_path=None):
     """Creates a rounded button with optional icon."""
-    button = ttk.Button(parent, text=text, command=command, width=width, style="Rounded.TButton")
+    button = ttk.Button(parent, text=text, command=command, width=width, style="Rounded.TButton",cursor="hand2")
 
     if icon_path:
         img = Image.open(os.path.join(current_directory, "images", icon_path)).resize((20, 20), Image.LANCZOS)
@@ -120,7 +120,7 @@ checkbox_frame = tk.Frame(dropdown_frame, bg="#f0f0f0")
 checkbox_vars = [tk.BooleanVar() for _ in checkbox_options]
 
 for i, option in enumerate(checkbox_options):
-    tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="#f0f0f0", bd=0, fg="black").grid(row=i, column=0, sticky='w')
+    tk.Checkbutton(checkbox_frame, text=option, variable=checkbox_vars[i], bg="#f0f0f0", bd=0, fg="black",cursor="hand2").grid(row=i, column=0, sticky='w')
 
 def toggle_checkbox_options():
     checkbox_frame.grid_remove() if checkbox_frame.winfo_ismapped() else checkbox_frame.grid()
