@@ -46,9 +46,12 @@ def log_message(message):
     result_area.yview(tk.END)
 
 def set_buttons_state(state):
-    """Enables or disables all interactive buttons."""
+    """Enables or disables all interactive buttons and changes the cursor based on state."""
+    cursor_type = "watch" if state == "disabled" else "hand2"
+    
     for button in [display_button, clear_button, folder_button, toggle_button]:
-        button.config(state=state)
+        button.config(state=state, cursor=cursor_type)
+
 
 def display_selection():
     """Logs the selected options, folders, and checkboxes, and disables buttons during operation."""
