@@ -24,7 +24,7 @@ def show_splash_screen():
     splash.configure(bg=SPLASH_BG)
     splash.overrideredirect(True)
 
-    tk.Label(splash, text="File Transfer (v0.10 beta)", bg=SPLASH_BG, font=("Helvetica", 16, "bold"), fg="white").pack(pady=20)
+    tk.Label(splash, text="File Transfer (v0.1.0 beta)", bg=SPLASH_BG, font=("Helvetica", 16, "bold"), fg="white").pack(pady=20)
     animation_label = tk.Label(splash, bg=SPLASH_BG)
     animation_label.pack(pady=10)
 
