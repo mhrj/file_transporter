@@ -21,18 +21,36 @@ def setup_destination(destination_dir):
         os.makedirs(path, exist_ok=True)
     return destination_dir, subdirectories
 
-def encode_zip_name(category):
-    """Generate a unique zip file name for each category based on a timestamp and random salt."""
-    unique_id = hashlib.sha256(os.urandom(16) + str(int(time.time())).encode()).hexdigest()
-    return f"{category}_{unique_id}.zip"
-
 def categorize_file(file):
     """Return the category and extension of the file if it matches a known type."""
     _, ext = os.path.splitext(file)
     for category, extensions in FILE_TYPES.items():
         if ext.lower() in extensions:
-            return category, ext.lower()
-    return None, None
+            return category
+    return None
+
+def move_or_copy_or_skip(file_path, dest_folder, method):
+    """Move file to destination if not already present."""
+    dest_path = os.path.join(dest_folder, os.path.basename(file_path))
+    if not os.path.exists(dest_path):
+        if method == 2:
+            shutil.move(file_path, dest_path)
+        else:
+            shutil.copy(file_path, dest_path)
+
+def handle_file(file_path, category, dest_folder, method, files_by_category=None):
+    """Handle the file based on the selected method (move, copy, zip then move/copy)."""
+    if method in (1, 3):  # Zip methods
+        files_by_category.setdefault(category, []).append(file_path)
+    elif method == 2:  # Move
+        move_or_copy_or_skip(file_path, dest_folder, method)
+    elif method == 4:  # Copy
+        move_or_copy_or_skip(file_path, dest_folder, method)
+
+def encode_zip_name(category):
+    """Generate a unique zip file name for each category based on a timestamp and random salt."""
+    unique_id = hashlib.sha256(os.urandom(16) + str(int(time.time())).encode()).hexdigest()
+    return f"{category}_{unique_id}.zip"
 
 def zip_files_by_category(files_by_category, subdirectories, method):
     """Create a zip file for each category and delete originals if method is 'zip and move'."""
@@ -48,26 +66,12 @@ def zip_files_by_category(files_by_category, subdirectories, method):
                 if method == 1:  # Zip and Move - delete original after zipping
                     os.remove(file)
 
-def handle_file(file_path, category, dest_folder, method, files_by_category=None):
-    """Handle the file based on the selected method (move, copy, zip then move/copy)."""
-    if method in (1, 3):  # Zip methods
-        files_by_category.setdefault(category, []).append(file_path)
-    elif method == 2:  # Move
-        move_or_skip(file_path, dest_folder)
-    elif method == 4:  # Copy
-        copy_or_skip(file_path, dest_folder)
-
-def move_or_skip(file_path, dest_folder):
-    """Move file to destination if not already present."""
-    dest_path = os.path.join(dest_folder, os.path.basename(file_path))
-    if not os.path.exists(dest_path):
-        shutil.move(file_path, dest_path)
-
-def copy_or_skip(file_path, dest_folder):
-    """Copy file to destination if not already present."""
-    dest_path = os.path.join(dest_folder, os.path.basename(file_path))
-    if not os.path.exists(dest_path):
-        shutil.copy(file_path, dest_path)
+def log_summary(counts, sizes, callback_log):
+    """Log the summary of processed files by category and total size."""
+    callback_log("\nFile processing complete.\n")
+    for category, count in counts.items():
+        size_mb = sizes[category] / (1024 * 1024)  # Convert bytes to MB
+        callback_log(f"{category.capitalize()} \n\t Processed {count} files, Total Size: {size_mb:.2f} MB")
 
 def process_files(main_dir, destination_dir, method, selected_types, log_callback):
     """Process files in the main directory according to the selected method and type."""
@@ -79,7 +83,7 @@ def process_files(main_dir, destination_dir, method, selected_types, log_callbac
     for file in os.listdir(main_dir):
         file_path = os.path.join(main_dir, file)
         if os.path.isfile(file_path):
-            category, ext = categorize_file(file)
+            category = categorize_file(file)
             if category and category in selected_types:
                 dest_folder = subdirectories[category]
                 counts[category] += 1
@@ -92,10 +96,3 @@ def process_files(main_dir, destination_dir, method, selected_types, log_callbac
         zip_files_by_category(files_by_category, subdirectories, method)
     
     log_summary(counts, sizes, log_callback)
-
-def log_summary(counts, sizes, callback_log):
-    """Log the summary of processed files by category and total size."""
-    callback_log("\nFile processing complete.\n")
-    for category, count in counts.items():
-        size_mb = sizes[category] / (1024 * 1024)  # Convert bytes to MB
-        callback_log(f"{category.capitalize()} \n\t Processed {count} files, Total Size: {size_mb:.2f} MB")
