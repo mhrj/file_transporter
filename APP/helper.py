@@ -22,10 +22,10 @@ def setup_destination(main_dir, destination_dir=None):
         os.makedirs(path, exist_ok=True)
     return destination_dir, subdirectories
 
-def encode_zip_name(extension):
-    """Generate a unique zip file name based on extension, salt, and timestamp."""
+def encode_zip_name(category):
+    """Generate a unique zip file name for each category based on a timestamp and random salt."""
     unique_id = hashlib.sha256(os.urandom(16) + str(int(time.time())).encode()).hexdigest()
-    return f"{extension[1:]}_{unique_id}.zip"
+    return f"{category}_{unique_id}.zip"
 
 def categorize_file(file):
     """Return the category and extension of the file if it matches a known type."""
@@ -35,26 +35,24 @@ def categorize_file(file):
             return category, ext.lower()
     return None, None
 
-def zip_files(files_by_extension, subdirectories, method):
-    """Create a zip file for each extension, and optionally delete originals if method is 'zip and move'."""
-    for extension, files in files_by_extension.items():
+def zip_files_by_category(files_by_category, subdirectories, method):
+    """Create a zip file for each category and delete originals if method is 'zip and move'."""
+    for category, files in files_by_category.items():
         if not files:
             continue
-        zip_name = encode_zip_name(extension)
-        category = next((cat for cat, exts in FILE_TYPES.items() if extension in exts), None)
-        zip_path = os.path.join(subdirectories[category], zip_name) if category else None
+        zip_name = encode_zip_name(category)
+        zip_path = os.path.join(subdirectories[category], zip_name)
         
-        if zip_path:
-            with zipfile.ZipFile(zip_path, 'w') as zipf:
-                for file in files:
-                    zipf.write(file, os.path.basename(file))
-                    if method == 1:  # Zip and Move - delete original after zipping
-                        os.remove(file)
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for file in files:
+                zipf.write(file, os.path.basename(file))
+                if method == 1:  # Zip and Move - delete original after zipping
+                    os.remove(file)
 
-def handle_file(file_path, dest_folder, method, files_by_extension=None, extension=None):
+def handle_file(file_path, category, dest_folder, method, files_by_category=None):
     """Handle the file based on the selected method (move, copy, zip then move/copy)."""
     if method in (1, 3):  # Zip methods
-        files_by_extension.setdefault(extension, []).append(file_path)
+        files_by_category.setdefault(category, []).append(file_path)
     elif method == 2:  # Move
         move_or_skip(file_path, dest_folder)
     elif method == 4:  # Copy
@@ -75,7 +73,7 @@ def copy_or_skip(file_path, dest_folder):
 def process_files(main_dir, destination_dir, method, selected_types, log_callback):
     """Process files in the main directory according to the selected method and type."""
     destination_dir, subdirectories = setup_destination(main_dir, destination_dir)
-    counts, sizes, files_by_extension = {cat: 0 for cat in FILE_TYPES}, {cat: 0 for cat in FILE_TYPES}, {}
+    counts, sizes, files_by_category = {cat: 0 for cat in FILE_TYPES}, {cat: 0 for cat in FILE_TYPES}, {}
 
     log_callback("Starting file processing...\n")
     
@@ -89,10 +87,10 @@ def process_files(main_dir, destination_dir, method, selected_types, log_callbac
                 sizes[category] += os.path.getsize(file_path)
 
                 log_callback(f"Processing file: {file}")
-                handle_file(file_path, dest_folder, method, files_by_extension, ext)
+                handle_file(file_path, category, dest_folder, method, files_by_category)
 
     if method in (1, 3):  # Zip methods
-        zip_files(files_by_extension, subdirectories, method)
+        zip_files_by_category(files_by_category, subdirectories, method)
     
     log_summary(counts, sizes, log_callback)
 
