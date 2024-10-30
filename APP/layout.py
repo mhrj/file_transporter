@@ -130,12 +130,12 @@ folder_labels = []
 for i, label_text in enumerate(["From", "To"]):
     folder_button = create_button(folder_frame, f"Browse ({label_text})", lambda idx=i: browse_for_folder(idx))
     folder_button.grid(row=2 * i, column=0, pady=(5, 10), sticky='w')
-    folder_labels.append(tk.Label(folder_frame, text="Select a folder...", width=50, font=("Helvetica", 10, "bold"), bg=BG_COLOR))
+    folder_labels.append(tk.Label(folder_frame, text="Select a folder...", width=50, font=("Helvetica", 10, "bold"), bg=BG_COLOR,fg="black"))
     folder_labels[-1].grid(row=2 * i + 1, column=0, pady=(0, 10), sticky='w')
 
 text_frame = tk.Frame(root, bg=BG_COLOR)
 text_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
-result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bg="#ffffff", font=("Helvetica", 10))
+result_area = tk.Text(text_frame, height=15, width=42, state=tk.DISABLED, bg="#ffffff", font=("Helvetica", 15),fg="black")
 result_area.grid(row=0, column=0)
 scrollbar = tk.Scrollbar(text_frame, command=result_area.yview)
 scrollbar.grid(row=0, column=1, sticky='ns')
