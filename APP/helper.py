@@ -96,7 +96,7 @@ def process_files(main_dir, destination_dir, method, selected_types, log_callbac
 
 def log_summary(counts, sizes, callback_log):
     """Log the summary of processed files by category and total size."""
-    callback_log("\nFile processing complete.")
+    callback_log("\nFile processing complete.\n")
     for category, count in counts.items():
         size_mb = sizes[category] / (1024 * 1024)  # Convert bytes to MB
-        callback_log(f"{category.capitalize()} - Processed {count} files, Total Size: {size_mb:.2f} MB")
+        callback_log(f"{category.capitalize()} \n\t Processed {count} files, Total Size: {size_mb:.2f} MB")
