@@ -24,7 +24,7 @@ def show_splash_screen():
     splash.configure(bg=SPLASH_BG)
     splash.overrideredirect(True)
 
-    tk.Label(splash, text="Welcome to File Transfer App", bg=SPLASH_BG, font=("Helvetica", 16, "bold"), fg="white").pack(pady=20)
+    tk.Label(splash, text="File Transfer (v0.10 beta)", bg=SPLASH_BG, font=("Helvetica", 16, "bold"), fg="white").pack(pady=20)
     animation_label = tk.Label(splash, bg=SPLASH_BG)
     animation_label.pack(pady=10)
 
@@ -90,7 +90,7 @@ def clear_all_selections():
     status_label.config(text="Selections cleared.")
 
 root = tk.Tk()
-root.title("File Transfer App")
+root.title("File Transfer")
 root.withdraw()
 show_splash_screen()
 root.geometry("800x600")
